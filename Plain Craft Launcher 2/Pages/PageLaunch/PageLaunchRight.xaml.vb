@@ -1,29 +1,9 @@
 ﻿Imports System.Windows.Threading
-
 Public Class PageLaunchRight
     Implements IRefreshable, IDispatcherUnhandledException
 
     Private Sub Init() Handles Me.Loaded
-        PanBack.ScrollToHome()
-        PanLog.Visibility = If(ModeDebug, Visibility.Visible, Visibility.Collapsed)
-        '快照版提示
-#If BETA Then
-        PanHint.Visibility = Visibility.Collapsed
-#Else
-        PanHint.Visibility = If(ThemeCheckGold(), Visibility.Collapsed, Visibility.Visible)
-        LabHint1.Text = "快照版包含尚未正式发布的测试功能，仅用于赞助者本人尝鲜。请不要发给其他人或者用来制作整合包哦！"
-        LabHint2.Text = $"若已累积赞助￥23.33，在爱发电私信发送 {vbLQ}解锁码{vbRQ} 即可永久隐藏此提示。"
-#End If
     End Sub
-
-    '暂时关闭快照版提示
-#If Not BETA Then
-    Private Sub BtnHintClose_Click(sender As Object, e As EventArgs) Handles BtnHintClose.Click
-        AniDispose(PanHint, True)
-    End Sub
-#End If
-
-#Region "主页"
 
     ''' <summary>
     ''' 刷新主页。
@@ -223,7 +203,7 @@ Public Class PageLaunchRight
                 If Hash = LoadedContentHash Then Return
                 LoadedContentHash = Hash
                 '实际加载内容
-                PanCustom.Children.Clear()
+                
                 If String.IsNullOrWhiteSpace(Content) Then
                     Log($"[Page] 实例化：清空主页 UI，来源为空")
                     Return
@@ -236,7 +216,7 @@ Public Class PageLaunchRight
                 Loop
                 Content = "<StackPanel xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"" xmlns:sys=""clr-namespace:System;assembly=mscorlib"" xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml"" xmlns:local=""clr-namespace:PCL;assembly=Plain Craft Launcher 2"">" & Content & "</StackPanel>"
                 Log($"[Page] 实例化：加载主页 UI 开始，最终内容长度：{Content.Count}")
-                PanCustom.Children.Add(GetObjectFromXML(Content))
+                
                 '加载计时
                 Dim LoadCostTime = (Date.Now - LoadStartTime).Milliseconds
                 Log($"[Page] 实例化：加载主页 UI 完成，耗时 {LoadCostTime}ms")
@@ -272,6 +252,5 @@ Public Class PageLaunchRight
     Private LoadedContentHash As Integer = -1
     Private LoadContentLock As New Object
 
-#End Region
 
 End Class
